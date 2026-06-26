@@ -10,3 +10,5 @@ Steps:
 
 Run this at natural breakpoints (after finishing a feature or fixing a bug),
 not after every single edit.
+
+**Graph location:** `.cursor/knowledge_graph.json` (never `.claude/`).

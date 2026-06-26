@@ -1,28 +1,39 @@
 # Cursor Project Manager
 
-A code **knowledge graph** for [Cursor](https://cursor.com) — for people who use
+A Cursor **plugin** for managing project sessions, switching contexts, tracking
+recent projects, and scaffolding a **code knowledge graph** — for people who use
 Cursor and don't have access to Claude Code.
 
 It's a port of the Claude Code [`project-manager`](https://github.com/HimanshuSingh2308/claude-code-plugins/tree/main/project-manager)
 plugin. That plugin uses Claude *agents* to read and index your codebase. This
-version replaces those agents with a small **MCP server** that parses your code
-**deterministically** using Python's built-in `ast` — so it works with **any**
-model Cursor is configured with (GPT, Gemini, etc.), and produces **exact** line
-numbers instead of LLM guesses.
+version uses Cursor-native paths (`.cursor/`, `AGENTS.md`) and pairs with the
+**cursor-project-manager** MCP server for deterministic Python indexing via `ast`.
 
-> **Scope:** Python projects (parsing is `ast`-based). The architecture is
-> language-extensible — see [Extending](#extending-to-other-languages).
+> **Scope:** The knowledge graph parser is Python-only (`ast`-based). The plugin
+> itself works with any project type.
 
 ## What you get
 
-- A `.cursor/knowledge_graph.json` index of every file, class, function, import,
-  reverse-dependency (`importedBy`), and detected FastAPI/Flask route — with
-  precise `[start, end]` line ranges.
-- MCP tools the Cursor agent calls to **navigate code by exact location** instead
-  of blindly scanning files.
-- A Cursor **rule** that tells the agent to consult the graph first.
-- Cursor **slash commands** (`/load-project`, `/kg-update`, etc.) as a UX layer.
+- Slash commands: `/load-project`, `/kg-update`, `/refresh-project`, etc.
+- A `.cursor/knowledge_graph.json` index (when MCP is configured) with exact
+  `[start, end]` line ranges for every file, class, function, import, and route.
+- Agent rules and commands scaffolded into loaded projects automatically.
 - A recent-projects registry at `~/.cursor/project-registry.json`.
+
+## Repo layout
+
+```
+cursor_plugin/
+├── project-manager/          ← Cursor plugin (install this)
+│   ├── .cursor-plugin/
+│   ├── commands/
+│   ├── rules/
+│   └── skills/
+└── .cursor/                  ← Example config for this repo
+    ├── commands/
+    ├── rules/
+    └── mcp.json.example
+```
 
 ## How it compares to the Claude plugin
 
@@ -36,42 +47,35 @@ numbers instead of LLM guesses.
 | Line-number accuracy | LLM estimate | Exact |
 | Model required | Claude | Any (model-agnostic) |
 | Graph location | `.claude/knowledge_graph.json` | `.cursor/knowledge_graph.json` |
-| Interface | commands + skills + agents | MCP tools + rules + commands |
+| Interface | commands + skills + agents | plugin + MCP tools + rules |
 
 The graph schema is intentionally compatible with the upstream plugin.
 
-## Install
+## Install the plugin
 
-Requires Python 3.11+.
+1. Clone this repo (or add it as a local plugin path).
+2. In Cursor: **Settings → Plugins → Add local plugin** pointing at the
+   `project-manager/` directory.
+
+Or symlink:
 
 ```bash
-git clone <this-repo> cursor-project-manager
-cd cursor-project-manager/mcp_server
-pip install -e .          # installs the `mcp` dependency and the server
+ln -s "$(pwd)/project-manager" ~/.cursor/plugins/local/project-manager
 ```
 
-(Or skip install and run straight from source with `PYTHONPATH` — see the
-example config.)
+See [`project-manager/README.md`](project-manager/README.md) for full plugin docs.
 
-## Configure Cursor
+## Configure the MCP server (knowledge graph)
 
-Add the MCP server to Cursor. Either project-level (`.cursor/mcp.json` in your
-repo) or global (`~/.cursor/mcp.json`). Copy `.cursor/mcp.json.example` and edit
-the path:
+The knowledge graph features (`query_symbol`, `query_file`, `/kg-update`) require
+the **cursor-project-manager** MCP server installed separately:
 
-```json
-{
-  "mcpServers": {
-    "cursor-project-manager": {
-      "command": "python",
-      "args": ["-m", "cursor_project_manager"],
-      "env": { "PYTHONPATH": "/ABSOLUTE/PATH/TO/cursor_plugin/mcp_server" }
-    }
-  }
-}
+```bash
+pip install cursor-project-manager   # when published
+# or install from source if you maintain a separate MCP package
 ```
 
-If you `pip install`ed it, you can instead use the console script:
+Add to `~/.cursor/mcp.json` (copy from `.cursor/mcp.json.example`):
 
 ```json
 {
@@ -84,27 +88,22 @@ If you `pip install`ed it, you can instead use the console script:
 }
 ```
 
-Then in Cursor: **Settings → MCP** and confirm the server is connected (the
-seven tools should be listed).
-
-To make the agent *use* the graph automatically, copy `.cursor/rules/` and
-`.cursor/commands/` into your target project's `.cursor/` directory (or keep this
-repo as your workspace to try it out).
+Then in Cursor: **Settings → MCP** and confirm the server is connected.
 
 ## Usage
 
 In Cursor's chat:
 
 ```
-/load-project           → indexes the project, prints a summary
+/load-project           → switch context, generate graph if 10+ source files
 /project-info           → tech stack + git + graph status
 /kg-update              → incremental re-index of changed files
-/refresh-project        → full re-index
+/refresh-project        → full re-scan of project knowledge cache
 /recent-projects        → jump back to a recent project
 ```
 
-Or just ask normally — the rule directs the agent to call `query_symbol` /
-`query_file` before reading files.
+Or just ask normally — the `knowledge-graph.mdc` rule directs the agent to call
+`query_symbol` / `query_file` before reading files.
 
 ## MCP tools
 
@@ -153,13 +152,6 @@ Or just ask normally — the rule directs the agent to call `query_symbol` /
   "routes": { "POST /login": "src/routes/login.py:login" }
 }
 ```
-
-## Extending to other languages
-
-The parser interface in `mcp_server/cursor_project_manager/parser.py` returns a
-`{file, file_entry, symbols}` dict per file. To add a language, write an
-equivalent parser (e.g. tree-sitter for TS/Go) that returns the same shape and
-dispatch on extension in `kg.discover_source_files` / `kg.build_graph`.
 
 ## License
 

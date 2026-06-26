@@ -27,6 +27,6 @@ If no graph exists yet, run `generate_knowledge_graph` first (or use
 ## Notes
 
 - Run at natural breakpoints, not after every single edit.
-- Graph path is always `.cursor/knowledge_graph.json`.
+- Graph path is always `.cursor/knowledge_graph.json` (never `.claude/`).
 - The `knowledge-graph.mdc` rule directs agents to consult the graph before
   reading source files.

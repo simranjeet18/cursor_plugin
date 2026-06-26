@@ -17,8 +17,8 @@ import, and reverse-dependency with exact line ranges.
    file affected by the change.
 3. Never blindly scan or read whole files when the graph can point you to the
    exact location.
-4. After completing a set of code changes, call `update_knowledge_graph` to keep
-   the graph current (it only re-parses changed files via git).
+4. After completing a set of code changes, run `/kg-update` to keep the graph
+   current (it only re-parses changed files via git).
 
 ## Available MCP tools
 
@@ -39,5 +39,7 @@ import, and reverse-dependency with exact line ranges.
 - `symbols.<Name>`: `kind`, `file`, `lines [start,end]`, `extends`, `members`
 - `routes`: detected FastAPI/Flask endpoints → `file:function`
 
-If the graph seems stale, run `update_knowledge_graph`; for a full rebuild run
-`generate_knowledge_graph`.
+If the graph seems stale, run `/kg-update`; for a full rebuild run
+`generate_knowledge_graph` via MCP.
+
+**Cursor paths only:** `.cursor/knowledge_graph.json` — never `.claude/` or `CLAUDE.md`.
