@@ -72,6 +72,7 @@ Branch, remote sync status, staged/modified/untracked counts, recent commits.
 
 **AGENTS.md**: Found / Not found
 **Rules**: .cursor/rules/ (list files)
+**Knowledge Graph**: `.cursor/knowledge_graph.json` (exists / not found)
 **Custom Commands**: N commands from .cursor/commands/
 **Project Skills**: N skills from .cursor/skills/
 ```

@@ -8,6 +8,7 @@ A Cursor plugin for managing project sessions, switching contexts, tracking rece
 |---------|-------------|
 | `/load-project <path>` | Switch working context to a project (uses cache if available) |
 | `/refresh-project` | Force re-scan current project and update knowledge cache |
+| `/kg-update` | Incrementally update `.cursor/knowledge_graph.json` for changed files |
 | `/recent-projects` | List and navigate to recent projects |
 | `/project-info` | Display metadata about current project |
 | `/new-project <name>` | Create a new project from a template |
@@ -28,6 +29,25 @@ Knowledge cache is stored at:
 ```
 
 Cache expires after 7 days and is automatically refreshed.
+
+### Code Knowledge Graph
+
+For projects with 10+ source files, `/load-project` also generates (or reuses) a
+deterministic code index at:
+
+```
+<project>/.cursor/knowledge_graph.json
+```
+
+The MCP server (`cursor-project-manager`) parses Python source via `ast` and
+exposes `query_symbol` / `query_file` tools so agents navigate by exact line
+ranges instead of scanning files. Use `/kg-update` after code changes for an
+incremental re-index.
+
+Scaffolded into loaded projects when missing:
+
+- `.cursor/rules/knowledge-graph.mdc` — tells agents to consult the graph first
+- `.cursor/commands/kg-update.md` — incremental graph update command
 
 ### Refresh Project
 
@@ -186,9 +206,12 @@ project-manager/
 ├── commands/
 │   ├── load-project.md
 │   ├── refresh-project.md
+│   ├── kg-update.md
 │   ├── recent-projects.md
 │   ├── project-info.md
 │   └── new-project.md
+├── rules/
+│   └── knowledge-graph.mdc
 ├── skills/
 │   └── project-context/
 │       ├── SKILL.md

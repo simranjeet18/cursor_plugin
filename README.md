@@ -26,6 +26,10 @@ numbers instead of LLM guesses.
 
 ## How it compares to the Claude plugin
 
+> **Canonical paths in this repo are Cursor-only** (`.cursor/`, `AGENTS.md`,
+> `~/.cursor/project-registry.json`). The Claude column is historical context
+> from the upstream plugin this project ports.
+
 | | Claude `project-manager` | Cursor Project Manager (this) |
 |---|---|---|
 | Parsing engine | Claude agents (Sonnet/Haiku) | Deterministic `ast` via MCP server |
@@ -34,7 +38,7 @@ numbers instead of LLM guesses.
 | Graph location | `.claude/knowledge_graph.json` | `.cursor/knowledge_graph.json` |
 | Interface | commands + skills + agents | MCP tools + rules + commands |
 
-The graph schema is intentionally compatible with the original.
+The graph schema is intentionally compatible with the upstream plugin.
 
 ## Install
 

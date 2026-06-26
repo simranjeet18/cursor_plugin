@@ -112,6 +112,19 @@ When switching between projects:
 - Manually refreshed via `/refresh-project`
 - Deep refresh via `/refresh-project --deep`
 
+## Code Knowledge Graph
+
+**Location**: `<project>/.cursor/knowledge_graph.json`
+
+**Scaffolded by** `/load-project` when the project has 10+ source files:
+
+- `.cursor/rules/knowledge-graph.mdc` (from `project-manager/rules/`)
+- `.cursor/commands/kg-update.md` (from `project-manager/commands/`)
+
+**Incremental updates**: `/kg-update` or `update_knowledge_graph` MCP tool.
+
+This plugin scaffolds Cursor paths only (`.cursor/`, `AGENTS.md`).
+
 ## Project Templates
 
 Built-in templates and scaffold commands: [project-templates.md](references/project-templates.md)
@@ -139,8 +152,9 @@ Project context is maintained through:
 
 ## Integration Points
 
-- `/load-project` — switch context (uses knowledge cache)
+- `/load-project` — switch context (uses knowledge cache; scaffolds KG when eligible)
 - `/refresh-project` — force re-scan and update cache
+- `/kg-update` — incremental knowledge graph update
 - `/recent-projects` — list and navigate history
 - `/project-info` — display current project details
 - `/new-project` — create from templates

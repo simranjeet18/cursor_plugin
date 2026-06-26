@@ -160,6 +160,31 @@ scannedAt: {ISO timestamp}
 
 Create the parent directory if it does not exist.
 
+### Step 6.5: Knowledge Graph (Cursor-only)
+
+If the project has **10 or more** source files (Python `.py` for the MCP parser;
+count other languages for display only):
+
+1. **Generate the graph** at `.cursor/knowledge_graph.json`:
+   - Call the `generate_knowledge_graph` MCP tool with the project root, or
+   - Use the `kg-generator` subagent with an explicit output path of
+     `.cursor/knowledge_graph.json`.
+   - Skip if a fresh graph already exists (check `meta.generatedAt`).
+
+2. **Scaffold agent rule** — if `.cursor/rules/knowledge-graph.mdc` is missing,
+   copy the template from this plugin's `project-manager/rules/knowledge-graph.mdc`
+   into the project's `.cursor/rules/` directory.
+
+3. **Scaffold slash command** — if `.cursor/commands/kg-update.md` is missing,
+   copy the template from this plugin's `project-manager/commands/kg-update.md`
+   into the project's `.cursor/commands/` directory.
+
+**Cursor-only** — scaffold `.cursor/` paths and `AGENTS.md` only. Do not create
+artifacts from other agent tools.
+
+If fewer than 10 source files, note that the knowledge graph was skipped and
+suggest `/refresh-project` or `generate_knowledge_graph` after the codebase grows.
+
 ### Step 7: Update Project Registry
 
 Add or update entry in `~/.cursor/project-registry.json`:
@@ -194,6 +219,7 @@ Display a concise summary:
 
 ### Key Files Found
 - AGENTS.md (project instructions)
+- `.cursor/knowledge_graph.json` (code index, if 10+ source files)
 - 15 npm scripts available
 - Vitest test setup configured
 - GitHub Actions CI/CD

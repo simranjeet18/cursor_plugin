@@ -15,7 +15,7 @@ PROJECT_MARKERS = [
     "Pipfile",
     "environment.yml",
     ".git",
-    "CLAUDE.md",
+    "AGENTS.md",
     ".cursor",
 ]
 

@@ -1,7 +1,7 @@
 """Knowledge graph assembly, persistence, incremental update, and querying.
 
-The graph schema mirrors the original Claude ``project-manager`` plugin so the
-two are interoperable, but it is written to ``.cursor/knowledge_graph.json`` and
+The graph schema matches the upstream ``project-manager`` plugin for
+compatibility. Graphs are written to ``.cursor/knowledge_graph.json`` and
 generated deterministically from the Python AST parser.
 """
 
@@ -35,7 +35,6 @@ SKIP_DIRS = {
     "site-packages",
     ".tox",
     ".cursor",
-    ".claude",
 }
 
 
