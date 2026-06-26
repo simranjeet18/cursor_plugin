@@ -1,0 +1,21 @@
+{
+  "name": "project-manager",
+  "displayName": "Project Manager",
+  "version": "1.0.0",
+  "description": "Manage project sessions, switch contexts, track recent projects, load metadata, and scaffold new projects from templates.",
+  "author": {
+    "name": "Himanshu Singh",
+    "url": "https://github.com/HimanshuSingh2308"
+  },
+  "repository": "https://github.com/HimanshuSingh2308/cursor-plugins",
+  "license": "MIT",
+  "keywords": [
+    "project-management",
+    "context-switching",
+    "session",
+    "workspace",
+    "templates",
+    "scaffolding"
+  ],
+  "skills": "./skills/"
+}
