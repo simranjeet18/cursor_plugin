@@ -1,0 +1,43 @@
+---
+description: Use the code knowledge graph (via MCP) before reading source files
+alwaysApply: true
+---
+
+# Code Knowledge Graph
+
+This project is indexed by the **cursor-project-manager** MCP server. A structured
+graph lives at `.cursor/knowledge_graph.json` mapping every file, class, function,
+import, and reverse-dependency with exact line ranges.
+
+## Use the graph BEFORE scanning source files
+
+1. To find a class/function/enum, call the `query_symbol` tool — it returns the
+   exact `file` and `lines` `[start, end]`. Then read only those lines.
+2. Before changing a file, call `query_file` and check `importedBy` to find every
+   file affected by the change.
+3. Never blindly scan or read whole files when the graph can point you to the
+   exact location.
+4. After completing a set of code changes, call `update_knowledge_graph` to keep
+   the graph current (it only re-parses changed files via git).
+
+## Available MCP tools
+
+| Tool | Purpose |
+|------|---------|
+| `load_project` | Start work on a project; auto-generates the graph |
+| `get_project_info` | Tech stack, source dir, git status, graph status |
+| `generate_knowledge_graph` | Full re-scan of all Python source |
+| `update_knowledge_graph` | Incremental update for changed files |
+| `query_symbol` | Find a symbol's file + line range |
+| `query_file` | A file's symbols, imports, and `importedBy` |
+| `list_recent_projects` | Recently loaded projects |
+
+## Graph schema (key sections)
+
+- `meta`: language, sourceDir, totalFiles, totalSymbols, generatedAt
+- `files.<path>`: `description`, `lines`, `symbols`, `imports`, `importedBy`
+- `symbols.<Name>`: `kind`, `file`, `lines [start,end]`, `extends`, `members`
+- `routes`: detected FastAPI/Flask endpoints → `file:function`
+
+If the graph seems stale, run `update_knowledge_graph`; for a full rebuild run
+`generate_knowledge_graph`.

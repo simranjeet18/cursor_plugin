@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cursor-project-manager": {
+      "command": "python",
+      "args": ["-m", "cursor_project_manager"],
+      "env": {
+        "PYTHONPATH": "/ABSOLUTE/PATH/TO/cursor_plugin/mcp_server"
+      }
+    }
+  }
+}

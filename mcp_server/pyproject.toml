@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cursor-project-manager"
+version = "0.1.0"
+description = "Deterministic Python code knowledge graph exposed to Cursor over MCP"
+readme = "../README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Simranjeet Singh" }]
+keywords = [
+    "cursor",
+    "mcp",
+    "knowledge-graph",
+    "code-navigation",
+    "project-management",
+    "codebase-index",
+]
+dependencies = ["mcp>=1.2.0"]
+
+[project.scripts]
+cursor-project-manager = "cursor_project_manager.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["cursor_project_manager"]
